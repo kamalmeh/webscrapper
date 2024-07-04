@@ -1,0 +1,130 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Scrapper Configuration List</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
+
+        <!-- Bootstrap CSS v5.2.1 -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+            crossorigin="anonymous"
+        />
+    </head>
+
+    <body>
+        <header>
+            <nav
+                class="navbar navbar-expand-sm navbar-dark bg-dark"
+            >
+                <div class="container">
+                    <a class="navbar-brand" href="{% url 'scrapper:home' %}">ScrapeNow</a>
+                    <button
+                        class="navbar-toggler d-lg-none"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapsibleNavId"
+                        aria-controls="collapsibleNavId"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation"
+                    >
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="collapsibleNavId">
+                        <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{% url 'scrapper:home' %}" aria-current="page"
+                                    >Home
+                                    <span class="visually-hidden">(current)</span></a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'scrapper:scrapper-list' %}">Scrappers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <main class="container">
+            <div class="row justify-content-center align-items-center g-2">
+                <div class="col">
+                    <h1 class="display-1">Scrapper Configuration</h1>
+                </div>
+            </div>
+            <div class="row justify-content-center align-items-center g-2">
+                <div class="col">
+                    <form id="create" method="POST" action="{% url 'scrapper:scrapper-create' %}">
+                        {% csrf_token %}
+                    </form>
+                    <a href="#" onClick="createSubmit()">Create New Site To Scrape</a>
+                    <script>
+                        function createSubmit() {
+                            document.getElementById("create").submit();
+                        }
+                    </script>
+                </div>
+            </div>
+            <div class="row justify-content-center align-items-center g-2">
+                <div class="col">
+                    <ul>
+                        {% for config in configs %}
+                        <li>{{ config.name }} - <a href="#" onClick="scrape{{ forloop.counter }}()">Scrape</a> - <a href="#" onClick="editForm{{ forloop.counter }}()">Edit</a>
+                            <form id="list_{{ forloop.counter }}" method="POST" action="{% url 'scrapper:scrapper-update' config.pk %}">
+                                {% csrf_token %}
+                            </form>
+                            <form id="scrape_{{ forloop.counter }}" method="POST" action="{% url 'scrapper:scrape' config.pk %}">
+                                {% csrf_token %}
+                            </form>
+                            <script>
+                                function editForm{{ forloop.counter }}() {
+                                    document.getElementById("list_{{ forloop.counter }}").submit();
+                                }
+                                function scrape{{ forloop.counter }}() {
+                                    document.getElementById("scrape_{{ forloop.counter }}").submit();
+                                }
+                            </script>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col">
+                    <div class="row justify-content-center align-items-center g-2">
+                        <div class="col"><h1>Scrapped Content {% if name %} <span class="display-6">of {{ name }} </span>{% endif %}</h1></div>
+                    </div>
+                    <div class="row justify-content-center align-items-center g-2">
+                        <div class="col">
+                            {% for element in elements %}
+                            <ul>
+                                <li> {{ element }} </li>
+                            </ul>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <!-- place footer here -->
+        </footer>
+        <!-- Bootstrap JavaScript Libraries -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"
+        ></script>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>
